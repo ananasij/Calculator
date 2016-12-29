@@ -1,0 +1,58 @@
+body {
+    background-color: #2a1c35;
+    background: url("http://cdn.pcwallart.com/images/gradient-wallpaper-4.jpg");
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 300;
+    font-size: 60px;
+    color: #fff;
+}
+
+.calc-body {
+    position: absolute;
+    top: 15%;
+    left: 35%;
+    min-width: 500px;
+    border: 1px #fff solid;
+    border-radius: 15px;
+    padding: 20px;
+    background: rgb(0, 0, 0);
+    background: rgba(0, 0, 0, 0.5);
+
+}
+
+.calc-display {
+    height: 100px;
+    margin: 20px 5px;
+    padding: 6px 16px;
+    border: 1px #fff solid;
+    border-radius: 15px;
+    /*background: rgba(0, 0, 0, 0.5);*/
+}
+
+.calc-input {
+    height: 70%;
+    text-align: right;
+}
+
+.calc-result {
+    text-align: left;
+    font-size: 20px;
+}
+
+.calc-btn {
+    text-align: center;
+    line-height: 85px;
+    width: 75px;
+    height: 75px;
+    padding: 5px;
+    margin: 10px;
+    display: inline-block;
+    border: 1px #fff solid;
+    border-radius: 50px;
+    /*background: rgba(0, 0, 0, 0.5);*/
+}
+
+.btn-equal {
+    width: 90%;
+    border-radius: 50px;
+}
