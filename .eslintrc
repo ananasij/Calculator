@@ -803,7 +803,7 @@
             "ignoreUrls": true,
             "ignoreComments": false,
             "ignoreStrings": true,
-//            "ignoreRegExpLiterals": true,
+            "ignoreRegExpLiterals": true,
             "ignoreTemplateLiterals": true
         }],
         "no-plusplus": "warn"
