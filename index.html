@@ -5,41 +5,43 @@
     <title></title>
     <link rel="stylesheet" href="style.css"/>
     <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
+    <script src="jquery.min.js"></script>
+    <script src="main.js"></script>
 </head>
 <body>
 <div class="calc-wrap">
     <div class="calc-body">
-        <div class="calc-display">
-            <div class="calc-input">9</div>
-            <div class="calc-result">1+9</div>
+        <div class="calc-display js-display">
+            <div class="calc-current js-current"></div>
+            <div class="calc-history js-history"></div>
         </div>
         <div class="calc-buttons">
             <div>
-                <div class="calc-btn">7</div>
-                <div class="calc-btn">8</div>
-                <div class="calc-btn">9</div>
-                <div class="calc-btn">&#247;</div>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="55">7</a>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="56">8</a>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="57">9</a>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="111">÷</a>
             </div>
             <div>
-                <div class="calc-btn">4</div>
-                <div class="calc-btn">5</div>
-                <div class="calc-btn">6</div>
-                <div class="calc-btn">&#215;</div>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="52">4</a>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="53">5</a>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="54">6</a>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="106">×</a>
             </div>
             <div>
-                <div class="calc-btn">1</div>
-                <div class="calc-btn">2</div>
-                <div class="calc-btn">3</div>
-                <div class="calc-btn">&#8722;</div>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="49">1</a>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="50">2</a>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="51">3</a>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="109">−</a>
             </div>
             <div>
-                <div class="calc-btn">0</div>
-                <div class="calc-btn">,</div>
-                <div class="calc-btn">C&nbsp;</div>
-                <div class="calc-btn">&#43;</div>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="48">0</a>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="188 190 110">,</a>
+                <a href="#" class="calc-btn js-btn js-clearBtn" data-key="8">C&nbsp;</a>
+                <a href="#" class="calc-btn js-btn js-inputBtn" data-key="107">+</a>
             </div>
             <div>
-                <div class="calc-btn btn-equal">=</div>
+                <a href="#" class="calc-btn btn-equal js-btn js-submit" data-key="13">=</a>
             </div>
         </div>
     </div>

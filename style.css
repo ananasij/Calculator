@@ -26,15 +26,15 @@ body {
     padding: 6px 16px;
     border: 1px #fff solid;
     border-radius: 15px;
-    /*background: rgba(0, 0, 0, 0.5);*/
+    background: rgba(0, 0, 0, 0.5);
 }
 
-.calc-input {
+.calc-current {
     height: 70%;
     text-align: right;
 }
 
-.calc-result {
+.calc-history {
     text-align: left;
     font-size: 20px;
 }
@@ -49,7 +49,16 @@ body {
     display: inline-block;
     border: 1px #fff solid;
     border-radius: 50px;
-    /*background: rgba(0, 0, 0, 0.5);*/
+    background: rgba(0, 0, 0, 0.5);
+}
+
+a.calc-btn,
+a.calc-btn:active,
+a.calc-btn:hover,
+a.calc-btn:visited,
+a.calc-btn:focus {
+    text-decoration: none;
+    color: #fff;
 }
 
 .btn-equal {
