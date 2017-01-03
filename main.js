@@ -3,6 +3,7 @@ var keys = {
 
 function init() {
     initKeyboard();
+    var calc = new Calculator();
     showCurrentInput(0);
 
     $('.js-inputBtn').on('click', function(e) {
@@ -22,6 +23,12 @@ function init() {
         if (targetBtn) {
             targetBtn.click();
         }
+    });
+
+    $('.js-btn').on('click', function(e) {
+        e.preventDefault();
+        var input = $(e.target).text();
+        console.log(input + ': ' + calc.processInput(input) + ' -> new state: ' + calc.state);
     });
 }
 
@@ -53,3 +60,92 @@ function clearInput() {
 
 $(document).ready(init);
 
+// CALC
+
+var STATE_START = 'start';
+var STATE_NUMBER = 'number input';
+var STATE_OPERATOR = 'operator entered';
+/* var OPERATOR_SUM = '';
+var OPERATOR_SUBSTR = '';
+var OPERATOR_MULT = '';
+var OPERATOR_DIV = ''; */
+
+function Calculator() {
+    this.state = STATE_START;
+    this.firstNumber = 0;
+    this.secondNumber = null;
+    this.operator = null;
+}
+
+Calculator.prototype.processInput = function(input) {
+    var inputType = getType(input);
+    console.log(inputType + ' for ' + this.state);
+    switch (this.state) {
+        case STATE_START:
+            if (inputType === 'number') {
+                this.state = STATE_NUMBER;
+                return true;
+            } else if (inputType === 'dot') {
+                this.state = STATE_NUMBER;
+                return true;
+            } else if (inputType === 'operator') {
+                this.state = STATE_OPERATOR;
+                return true;
+            }
+            return false;
+        case STATE_NUMBER:
+            if (inputType === 'number') {
+                this.state = STATE_NUMBER;
+                return true;
+            } else if (inputType === 'dot') {
+                this.state = STATE_NUMBER;
+                return true;
+            } else if (inputType === 'operator') {
+                this.state = STATE_OPERATOR;
+                return true;
+            } else if (inputType === 'equal') {
+                this.state = STATE_START;
+                return true;
+            } else if (inputType === 'clear') {
+                this.state = STATE_START;
+                return true;
+            }
+            return false;
+        case STATE_OPERATOR:
+            if (inputType === 'number') {
+                this.state = STATE_NUMBER;
+                return true;
+            } else if (inputType === 'dot') {
+                this.state = STATE_NUMBER;
+                return true;
+            } else if (inputType === 'operator') {
+                this.state = STATE_OPERATOR;
+                return true;
+            } else if (inputType === 'clear') {
+                this.state = STATE_START;
+                return true;
+            }
+            return false;
+        default:
+            return false;
+    }
+};
+
+function getType(input) {
+    if (/[0-9]/.test(input)) {
+        return 'number';
+    }
+    if (/÷|×|−|\+/.test(input)) {
+        return 'operator';
+    }
+    if (/\.|,/.test(input)) {
+        return 'dot';
+    }
+    if (/=/.test(input)) {
+        return 'equal';
+    }
+    if (/C/.test(input)) {
+        return 'clear';
+    }
+    return undefined;
+}
