@@ -1,22 +1,10 @@
-var keys = {
-};
+var keys = {};
+var calc;
 
 function init() {
     initKeyboard();
-    var calc = new Calculator();
+    calc = new Calculator();
     showCurrentInput(0);
-
-    $('.js-inputBtn').on('click', function(e) {
-        e.preventDefault();
-        var input = $(e.target).text();
-        showCurrentInput(input);
-        updateHistory(input);
-    });
-
-    $('.js-clearBtn').on('click', function(e) {
-        e.preventDefault();
-        clearInput();
-    });
 
     $('body').on('keyup', function(e) {
         var targetBtn = keys[e.keyCode];
@@ -28,7 +16,13 @@ function init() {
     $('.js-btn').on('click', function(e) {
         e.preventDefault();
         var input = $(e.target).text();
-        console.log(input + ': ' + calc.processInput(input) + ' -> new state: ' + calc.state);
+
+        calc.processInput(input);
+        var currentInput = calc.getCurrentInput();
+        if (currentInput !== false) {
+            showCurrentInput(currentInput);
+            updateHistory();
+        }
     });
 }
 
@@ -49,103 +43,212 @@ function showCurrentInput(input) {
     inputDisplay.text(input);
 }
 
-function updateHistory(input) {
+function updateHistory() {
     var historyLine = $('.js-display').find('.js-history');
-    historyLine.append(input);
-}
-
-function clearInput() {
-    showCurrentInput(0);
+    historyLine.text(calc.writeCalculation());
 }
 
 $(document).ready(init);
 
 // CALC
 
-var STATE_START = 'start';
-var STATE_NUMBER = 'number input';
-var STATE_OPERATOR = 'operator entered';
-/* var OPERATOR_SUM = '';
-var OPERATOR_SUBSTR = '';
-var OPERATOR_MULT = '';
-var OPERATOR_DIV = ''; */
+var STATE_START = 'STATE_START';
+var STATE_NUMBER = 'STATE_NUMBER';
+var STATE_OPERATOR = 'STATE_OPERATOR';
+var STATE_ERROR = 'STATE_ERROR';
+var OPERATOR_SUM = '+';
+var OPERATOR_SUBSTR = '−';
+var OPERATOR_MULT = '×';
+var OPERATOR_DIV = '÷';
+var INPUT_NUMBER = 'INPUT_NUMBER';
+var INPUT_OPERATOR = 'INPUT_OPERATOR';
+var INPUT_DOT = 'INPUT_DOT';
+var INPUT_EQUAL = 'INPUT_EQUAL';
+var INPUT_CLEAR = 'INPUT-CLEAR';
+var NUM_LIMIT = 14;
+
 
 function Calculator() {
     this.state = STATE_START;
-    this.firstNumber = 0;
-    this.secondNumber = null;
-    this.operator = null;
+    this.clear();
 }
 
 Calculator.prototype.processInput = function(input) {
-    var inputType = getType(input);
-    console.log(inputType + ' for ' + this.state);
+    var inputType = this.getType(input);
+    var currentNumber = this.getNumberToModify();
+    switch (inputType) {
+        case INPUT_NUMBER:
+            if ([STATE_START, STATE_NUMBER, STATE_OPERATOR, STATE_ERROR].includes(this.state)) {
+                if ([STATE_START, STATE_ERROR].includes(this.state)) {
+                    this.clear();
+                }
+                this.state = STATE_NUMBER;
+                this[currentNumber] = this.addDigit(input, this[currentNumber]);
+            }
+            break;
+        case INPUT_DOT:
+            if ([STATE_START, STATE_NUMBER, STATE_OPERATOR, STATE_ERROR].includes(this.state)) {
+                if ([STATE_START, STATE_ERROR].includes(this.state)) {
+                    this.clear();
+                }
+                this.state = STATE_NUMBER;
+                this[currentNumber] = this.addDot(this[currentNumber]);
+            }
+            break;
+        case INPUT_OPERATOR:
+            if ([STATE_START, STATE_NUMBER, STATE_OPERATOR].includes(this.state)) {
+                this.state = STATE_OPERATOR;
+                this.setOperation(input);
+            }
+            break;
+        case INPUT_EQUAL:
+            if (this.state === STATE_NUMBER) {
+                this.state = STATE_START;
+                this.calculate();
+            }
+            break;
+        case INPUT_CLEAR:
+            this.state = STATE_START;
+            this.clear();
+            break;
+        default:
+            break;
+    }
+};
+
+Calculator.prototype.getType = function(input) {
+    if (/[0-9]/.test(input)) {
+        return INPUT_NUMBER;
+    }
+    if (/÷|×|−|\+/.test(input)) {
+        return INPUT_OPERATOR;
+    }
+    if (/,/.test(input)) {
+        return INPUT_DOT;
+    }
+    if (/=/.test(input)) {
+        return INPUT_EQUAL;
+    }
+    if (/C/.test(input)) {
+        return INPUT_CLEAR;
+    }
+    return undefined;
+};
+
+Calculator.prototype.addDigit = function(digit, number) {
+    if (number.toString().length >= NUM_LIMIT) {
+        return number;
+    }
+    if (number.toString() === '0') {
+        return digit;
+    }
+    return '' + number + digit;
+};
+
+Calculator.prototype.addDot = function(number) {
+    if (('' + number).includes('.')) {
+        return number;
+    }
+    if (!number) {
+        return '0.';
+    }
+    return number + '.';
+};
+
+Calculator.prototype.clear = function() {
+    this.firstNumber = '';
+    this.secondNumber = '';
+    this.operator = null;
+};
+
+Calculator.prototype.setOperation = function(operator) {
+    if (!this.firstNumber) {
+        this.firstNumber = '0';
+    }
+    if (this.secondNumber) {
+        this.calculate();
+        if (this.state === STATE_ERROR) {
+            return;
+        }
+    }
+    this.operator = operator;
+};
+
+Calculator.prototype.writeCalculation = function() {
+    var calculation = '';
+    calculation += this.firstNumber;
+    if (this.operator) {
+        calculation += this.operator;
+    }
+    if (this.secondNumber) {
+        calculation += this.secondNumber;
+    }
+    return calculation;
+};
+
+Calculator.prototype.getNumberToModify = function() {
+    if (this.operator) {
+        return 'secondNumber';
+    }
+    return 'firstNumber';
+};
+
+Calculator.prototype.calculate = function() {
+    if (!this.secondNumber) {
+        return;
+    }
+    var result = 0;
+    var a = parseFloat(this.firstNumber);
+    var b = parseFloat(this.secondNumber);
+    switch (this.operator) {
+        case OPERATOR_SUM:
+            result = a + b;
+            break;
+        case OPERATOR_SUBSTR:
+            result = a - b;
+            break;
+        case OPERATOR_MULT:
+            result = a * b;
+            break;
+        case OPERATOR_DIV:
+            result = a / b;
+            break;
+        default:
+            break;
+    }
+
+    this.secondNumber = '0';
+    this.operator = null;
+    if (!Number.isFinite(result) || result.toString().length > NUM_LIMIT) {
+        this.state = STATE_ERROR;
+        this.firstNumber = '0';
+    } else {
+        this.firstNumber = this.formatNumber(result.toString());
+    }
+};
+
+Calculator.prototype.getCurrentInput = function() {
     switch (this.state) {
         case STATE_START:
-            if (inputType === 'number') {
-                this.state = STATE_NUMBER;
-                return true;
-            } else if (inputType === 'dot') {
-                this.state = STATE_NUMBER;
-                return true;
-            } else if (inputType === 'operator') {
-                this.state = STATE_OPERATOR;
-                return true;
-            }
-            return false;
         case STATE_NUMBER:
-            if (inputType === 'number') {
-                this.state = STATE_NUMBER;
-                return true;
-            } else if (inputType === 'dot') {
-                this.state = STATE_NUMBER;
-                return true;
-            } else if (inputType === 'operator') {
-                this.state = STATE_OPERATOR;
-                return true;
-            } else if (inputType === 'equal') {
-                this.state = STATE_START;
-                return true;
-            } else if (inputType === 'clear') {
-                this.state = STATE_START;
-                return true;
+            var currentNumber = this.getNumberToModify();
+            if (this[currentNumber]) {
+                return this[currentNumber];
             }
-            return false;
+            return '0';
         case STATE_OPERATOR:
-            if (inputType === 'number') {
-                this.state = STATE_NUMBER;
-                return true;
-            } else if (inputType === 'dot') {
-                this.state = STATE_NUMBER;
-                return true;
-            } else if (inputType === 'operator') {
-                this.state = STATE_OPERATOR;
-                return true;
-            } else if (inputType === 'clear') {
-                this.state = STATE_START;
-                return true;
-            }
-            return false;
+            return this.operator;
+        case STATE_ERROR:
+            return 'ERROR!';
         default:
             return false;
     }
 };
 
-function getType(input) {
-    if (/[0-9]/.test(input)) {
-        return 'number';
+Calculator.prototype.formatNumber = function(number) {
+    var prettyNumber = number.toString();
+    if (prettyNumber.includes('.')) {
+        return parseFloat(prettyNumber).toFixed(6).toString().replace(/0+$/, '');
     }
-    if (/÷|×|−|\+/.test(input)) {
-        return 'operator';
-    }
-    if (/\.|,/.test(input)) {
-        return 'dot';
-    }
-    if (/=/.test(input)) {
-        return 'equal';
-    }
-    if (/C/.test(input)) {
-        return 'clear';
-    }
-    return undefined;
-}
+    return prettyNumber;
+};
