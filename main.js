@@ -219,7 +219,7 @@ Calculator.prototype.calculate = function() {
 
     this.secondNumber = '0';
     this.operator = null;
-    if (!Number.isFinite(result) || result.toString().length > NUM_LIMIT) {
+    if (!Number.isFinite(result) || (result.toFixed(0)).toString().length > NUM_LIMIT) {
         this.state = STATE_ERROR;
         this.firstNumber = '0';
     } else {
