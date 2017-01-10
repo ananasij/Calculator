@@ -217,7 +217,7 @@ Calculator.prototype.calculate = function() {
             break;
     }
 
-    this.secondNumber = '0';
+    this.secondNumber = '';
     this.operator = null;
     if (!Number.isFinite(result) || (result.toFixed(0)).toString().length > NUM_LIMIT) {
         this.state = STATE_ERROR;
