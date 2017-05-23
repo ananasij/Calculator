@@ -6,7 +6,7 @@ function init() {
     calc = new Calculator();
     showCurrentInput(0);
 
-    $('body').on('keyup', function(e) {
+    $('body').on('keypress', function(e) {
         var targetBtn = keys[e.keyCode];
         if (targetBtn) {
             targetBtn.click();
